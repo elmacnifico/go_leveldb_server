@@ -18,7 +18,7 @@ type MinuteCache struct {
 }
 
 func NewInputCache(db *DbWriter) *InputCache {
-	ic := &InputCache{DbWriter: db, Input: make(chan *InputSignal, 1000), content: make(map[int64]MinuteCache, 60)}
+	ic := &InputCache{DbWriter: db, Input: make(chan *InputSignal, 100000), content: make(map[int64]MinuteCache, 60)}
 	go ic.ProcessInput()
 	go ic.FlushCacheToDB()
 	go ic.channelCheker()
@@ -38,7 +38,7 @@ func (ic *InputCache) FlushCacheToDB() {
 		for key, min := range ic.content[cacheMin].content {
 			ic.DbWriter.Input <- &DbInput{Key: key, Minute: &min}
 		}
-		time.Sleep(30 * time.Second)
+		time.Sleep(3 * time.Second)
 	}
 }
 

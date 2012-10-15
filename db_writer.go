@@ -1,7 +1,8 @@
 package main
 
 import (
-	"encoding/json"
+	"bytes"
+	"encoding/gob"
 	"github.com/jmhodges/levigo"
 	"log"
 	"time"
@@ -48,17 +49,31 @@ func (dw *DbWriter) ProcessInput() {
 	defer wo.Close()
 	defer ro.Close()
 
+	var buffer bytes.Buffer
+	enc := gob.NewEncoder(&buffer)
+	enc.Encode(Minute{})
+
+	dec := gob.NewDecoder(&buffer)
+	var m Minute
+	dec.Decode(&m)
+	buffer.Reset()
+
 	for input := range dw.Input {
 		//first write minutes
 		key := []byte(input.Key)
-
-		payload, err := json.Marshal(input.Minute)
-		//log.Println(string(payload))
+		err := enc.Encode(input.Minute)
 		if err != nil {
 			//there is smth really wrong...some kind of help cry would good
 			panic(err)
 		}
+		payload := buffer.Bytes()
+		//log.Println(len(payload))
 		//save
 		dw.Db.Put(wo, key, payload)
+		var m Minute
+		dec.Decode(&m)
+
+		log.Println(m)
+		buffer.Reset()
 	}
 }
