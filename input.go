@@ -29,7 +29,7 @@ func NewInputSimulator(channel chan *InputSignal, interval int64, workers int) *
 func (is *InputSimulator) PushSignals(interval int64, hostNumber int) {
 	interval = interval * 1E6
 	for {
-		sig := &InputSignal{Host: "host" + strconv.Itoa(hostNumber), Id: "test", Value: rand.Float64() * 1000, Time: time.Now().UTC().UnixNano()}
+		sig := &InputSignal{Host: "host" + strconv.Itoa(hostNumber), Id: "test", Value: rand.Float64() * 1000, Time: time.Now().UnixNano()}
 		is.Channel <- sig
 		time.Sleep(time.Duration(interval))
 	}

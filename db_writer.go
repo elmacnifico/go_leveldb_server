@@ -29,7 +29,7 @@ type DbWriter struct {
 }
 
 func NewDbWriter(db *levigo.DB) *DbWriter {
-	dw := &DbWriter{Db: db, Input: make(chan *DbInput, 1000)}
+	dw := &DbWriter{Db: db, Input: make(chan *DbInput, 100000)}
 	go dw.ProcessInput()
 	go dw.channelCheker()
 	return dw
@@ -53,7 +53,7 @@ func (dw *DbWriter) ProcessInput() {
 		key := []byte(input.Key)
 
 		payload, err := json.Marshal(input.Minute)
-		log.Println(len(payload))
+		//log.Println(string(payload))
 		if err != nil {
 			//there is smth really wrong...some kind of help cry would good
 			panic(err)
