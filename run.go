@@ -17,6 +17,7 @@ func main() {
 	}
 	defer db.Close()
 	writer := NewDbWriter(db)
-	NewInputSimulator(writer.Input, 100, 1)
+	cache := NewInputCache(writer)
+	NewInputSimulator(cache.Input, 100, 10000)
 	select {}
 }
